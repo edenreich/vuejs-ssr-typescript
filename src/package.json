@@ -4,10 +4,11 @@
   "description": "A simple vue ssr with typescript application",
   "main": "server.js",
   "scripts": {
-    "start": "yarn build && ../dist/server.js",
+    "start": "yarn package && APP_ENV=prod PORT=3000 node ../dist/server.js",
     "dev": "cross-env APP_ENV=dev PORT=3000 nodemon ts-node server.ts",
-    "prod": "cross-env APP_ENV=prod PORT=3000",
-    "build": "tsc"
+    "package": "yarn build && cp package.json ../dist/package.json && yarn --production --modules-folder ../dist/node_modules", 
+    "build": "yarn clean && tsc",
+    "clean": "rm -rf ../dist/*"
   },
   "author": "Eden Reich <eden.reich@gmail.com>",
   "license": "MIT",
