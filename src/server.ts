@@ -9,9 +9,8 @@ const renderer: VueRenderer.Renderer = VueRenderer.createRenderer();
 
 server.get('/index', async (request: Request, response: Response) => {
 
-    const vueTemplate: string = fs.readFileSync('./pages/index.vue', {encoding: 'utf-8'}); 
     const app: Vue = new Vue({
-        template: layout.replace('{{:content}}', vueTemplate)
+        // template: layout.replace('{{:content}}', )
     });
 
     try {
@@ -25,10 +24,34 @@ server.get('/index', async (request: Request, response: Response) => {
 
 server.get('/about', async (request: Request, response: Response) => {
 
+    const vueTemplate: string = fs.readFileSync('./pages/about.vue', {encoding: 'utf-8'}); 
+    const app: Vue = new Vue({
+        template: layout.replace('{{:content}}', vueTemplate)
+    });
+
+    try {
+        const html: string = await renderer.renderToString(app);
+        response.set('Content-Type', 'text/html');
+        response.end(html);
+    } catch (err) {
+        console.error(err);
+    }
+
 });
 
 server.get('/contact', async (request: Request, response: Response) => {
+    const vueTemplate: string = fs.readFileSync('./pages/contact.vue', {encoding: 'utf-8'}); 
+    const app: Vue = new Vue({
+        template: layout.replace('{{:content}}', vueTemplate)
+    });
 
+    try {
+        const html: string = await renderer.renderToString(app);
+        response.set('Content-Type', 'text/html');
+        response.end(html);
+    } catch (err) {
+        console.error(err);
+    }
 });
 
 server.listen(process.env.PORT);
