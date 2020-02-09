@@ -1,47 +1,34 @@
-import express, { Express } from 'express';
+import express, { Express, Request, Response } from 'express';
 import Vue from 'vue';
-import VueRenderer from 'vue-server-renderer';
+import * as VueRenderer from 'vue-server-renderer';
+import fs from 'fs';
 
 const server: Express = express(); 
+const layout: string = fs.readFileSync('./layouts/main.html', {encoding: 'utf-8'});
+const renderer: VueRenderer.Renderer = VueRenderer.createRenderer();
 
-const app = new Vue({
-    template: `<div>Hello World</div>`
-})
+server.get('/index', async (request: Request, response: Response) => {
 
-const renderer = VueRenderer.createRenderer()
+    const vueTemplate: string = fs.readFileSync('./pages/index.vue', {encoding: 'utf-8'}); 
+    const app: Vue = new Vue({
+        template: layout.replace('{{:content}}', vueTemplate)
+    });
 
-renderer.renderToString(app, (err: any, html: any) => {
-    if (err) throw err
-    console.log(html)
-})
+    try {
+        const html: string = await renderer.renderToString(app);
+        response.set('Content-Type', 'text/html');
+        response.end(html);
+    } catch (err) {
+        console.error(err);
+    }
+});
 
-renderer.renderToString(app).then((html: any) => {
-    console.log(html)
-}).catch((err: any) => {
-    console.error(err)
-})
+server.get('/about', async (request: Request, response: Response) => {
 
-server.get('*', (req, res) => {
-    const app = new Vue({
-        data: {
-            url: req.url
-        },
-        template: `<div>The visited URL is: {{ url }}</div>`
-    })
+});
 
-    renderer.renderToString(app, (err: any, html: any) => {
-        if (err) {
-            res.status(500).end('Internal Server Error')
-            return
-        }
-        res.end(`
-    <!DOCTYPE html>
-    <html lang="en">
-        <head><title>Hello</title></head>
-        <body>${html}</body>
-    </html>
-    `)
-    })
-})
+server.get('/contact', async (request: Request, response: Response) => {
 
-server.listen(process.env.PORT)
+});
+
+server.listen(process.env.PORT);
