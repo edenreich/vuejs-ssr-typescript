@@ -1,5 +1,6 @@
 import express, { Express } from 'express';
 import Vue from 'vue';
+import VueRenderer from 'vue-server-renderer';
 
 const server: Express = express(); 
 
@@ -7,7 +8,7 @@ const app = new Vue({
     template: `<div>Hello World</div>`
 })
 
-const renderer = require('vue-server-renderer').createRenderer()
+const renderer = VueRenderer.createRenderer()
 
 renderer.renderToString(app, (err: any, html: any) => {
     if (err) throw err
