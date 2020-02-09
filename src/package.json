@@ -6,7 +6,7 @@
   "scripts": {
     "start": "yarn package && APP_ENV=prod PORT=3000 node ../dist/server.js",
     "dev": "cross-env APP_ENV=dev PORT=3000 nodemon --exec 'ts-node' server.ts",
-    "package": "yarn clean:dist && yarn clean:modules && yarn build && yarn install --production && cp -R node_modules ../dist/node_modules && cp package.json ../dist/package.json && yarn clean:modules", 
+    "package": "yarn clean:dist && yarn clean:modules && yarn build && yarn install --production && cp -R node_modules ../dist/node_modules && cp package.json ../dist/package.json", 
     "build": "yarn clean:dist && yarn && tsc",
     "clean": "yarn clean:dist && yarn clean:modules",
     "clean:dist": "rm -rf ../dist/*",
