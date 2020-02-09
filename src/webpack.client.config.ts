@@ -14,7 +14,10 @@ const config: webpack.Configuration = merge(baseConfig, {
     extensions: ['.vue', '.ts']
   },
   module: {
-    rules: []
+    rules: [
+      { test: /\.ts$/, loader: 'ts-loader' },
+      { test: /\.vue$/, loader: 'vue-loader' }
+    ]
   },
   plugins: [
     new VueSSRClientPlugin()
