@@ -1,57 +1,52 @@
 import express, { Express, Request, Response } from 'express';
-import Vue from 'vue';
-import * as VueRenderer from 'vue-server-renderer';
 import fs from 'fs';
+import { createRenderer } from 'vue-server-renderer';
+import { createIndexPage } from './entries/index';
+import { createAboutPage } from './entries/about';
+import { createContactPage } from './entries/contact';
 
-const server: Express = express(); 
-const layout: string = fs.readFileSync('./layouts/main.html', {encoding: 'utf-8'});
-const renderer: VueRenderer.Renderer = VueRenderer.createRenderer();
+const server: Express = express();
+const renderer = createRenderer({
+    template: fs.readFileSync('dist/public/main.html', { encoding: 'utf-8'})
+});
+
+interface PageInterface {
+    title: string;
+    meta?: string;
+}
 
 server.get('/index', async (request: Request, response: Response) => {
+    const context: PageInterface = {
+        title: 'Index Page'
+    };
 
-    const app: Vue = new Vue({
-        // template: layout.replace('{{:content}}', )
-    });
-
-    try {
-        const html: string = await renderer.renderToString(app);
-        response.set('Content-Type', 'text/html');
-        response.end(html);
-    } catch (err) {
-        console.error(err);
-    }
+    const indexPage = createIndexPage({});
+    const html: string = await renderer.renderToString(indexPage, context);
+    response.set('Content-Type', 'text/html');
+    response.end(html);
 });
 
 server.get('/about', async (request: Request, response: Response) => {
+    const context: PageInterface = {
+        title: 'About Page'
+    };
 
-    const vueTemplate: string = fs.readFileSync('./pages/about.vue', {encoding: 'utf-8'}); 
-    const app: Vue = new Vue({
-        template: layout.replace('{{:content}}', vueTemplate)
-    });
-
-    try {
-        const html: string = await renderer.renderToString(app);
-        response.set('Content-Type', 'text/html');
-        response.end(html);
-    } catch (err) {
-        console.error(err);
-    }
-
+    const aboutPage = createAboutPage({});
+    const html: string = await renderer.renderToString(aboutPage, context);
+    response.set('Content-Type', 'text/html');
+    response.end(html);
 });
 
 server.get('/contact', async (request: Request, response: Response) => {
-    const vueTemplate: string = fs.readFileSync('./pages/contact.vue', {encoding: 'utf-8'}); 
-    const app: Vue = new Vue({
-        template: layout.replace('{{:content}}', vueTemplate)
-    });
+    const context: PageInterface = {
+        title: 'Contact Page'
+    };
 
-    try {
-        const html: string = await renderer.renderToString(app);
-        response.set('Content-Type', 'text/html');
-        response.end(html);
-    } catch (err) {
-        console.error(err);
-    }
+    const contactPage = createContactPage({});
+    const html: string = await renderer.renderToString(contactPage, context);
+    response.set('Content-Type', 'text/html');
+    response.end(html);
 });
 
-server.listen(process.env.PORT);
+
+server.listen(process.env.PORT, (): void => console.log(`Server started listening on port ${process.env.PORT}`));
